@@ -1,5 +1,6 @@
 path2bids='C:\Users\sdem348\Desktop\TestASLPipe';
 subject="sub-001";
+%test change
 P=makepaths(path2bids,subject);
 PWI = loadNift(P.pathASLNAT); %load raw ASL
 PVCPWI = loadNift(P.pathPVCmaskNAT); %load raw ASL
