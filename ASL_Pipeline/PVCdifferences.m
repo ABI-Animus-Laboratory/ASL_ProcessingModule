@@ -7,6 +7,7 @@ PVCPWI = loadNift(P.pathPVCmaskNAT); %load raw ASL
 PVCPWIres = loadNift(P.pathPVCres); %load raw ASL
 PVCPWI=imrotate(PVCPWI,90);
 
+%test second
 mask = loadNift(P.pathmaskNAT); %load raw ASL
 ASLMask=zeros(size(PWI));
 ASLMask(mask==1)=PWI(mask==1);
