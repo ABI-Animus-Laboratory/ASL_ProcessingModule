@@ -6,6 +6,7 @@ subject="sub-002";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%% Do not need to change anything below %%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+writeDescription(path2bids) %new function to write in datadescription after import, can also check if exists so it's not always overwriting
 cd(path2bids)
 writedataPar(subject)
 cd(path2xasl)
@@ -41,7 +42,6 @@ renameNift(P.pathPVCNAT,P.pathASLNAT)
 xASL_wrp_ResampleASL(x); %transform ASLPVC into MNI and store in \population
 renameNift(P.pathASLMNI,P.pathPVCMNI)
 renameNift(P.pathASLNAT,P.pathPVCNAT)
-%%
 renameNift(P.pathASLORINAT,P.pathASLNAT)
 renameNift(P.pathASLORIMNI,P.pathASLMNI)
 %% Make MNI Brain Mask and use mask on raw PVC MNI
