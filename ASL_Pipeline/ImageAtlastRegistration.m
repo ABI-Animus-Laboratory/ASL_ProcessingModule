@@ -11,7 +11,7 @@ mask=loadNift(P.pathmaskMNI); %load brain mask
 VascAtlsrshp = round(imresize3(VascAtlas,size(PWI),'Method','nearest')); %Resize atlas to xASL resolution
 PWI(isnan(PWI))=0;
 PWIPVC(isnan(PWIPVC))=0;
-
+%% Test again
 VascAtlsrshp(VascAtlsrshp>0)=1;
 Overlap=VascAtlsrshp+mask;
 figure(1)
