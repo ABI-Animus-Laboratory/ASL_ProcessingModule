@@ -1,5 +1,6 @@
 function [BFF] = computeBFF(path2bids,subject,path2atlas) 
     %% compute blood flow fractions in MNI space. 
+    % Presently uses the PVC ASL in MNI space to compute BFF
     P = makepaths(path2bids,subject);
     VascAtlas = xASL_io_Nifti2Im(path2atlas); %load vascular atlas MNI
     PWI=loadNift(P.pathASLMNI); %load original perfusion MNI
@@ -8,37 +9,24 @@ function [BFF] = computeBFF(path2bids,subject,path2atlas)
     VascAtlsrshp = round(imresize3(VascAtlas,size(PWI),'Method','nearest')); %Resize atlas to xASL resolution
     PWI(isnan(PWI))=0;
     PWIPVC(isnan(PWIPVC))=0;
-    for i=1:8
-        BFF(i,1)=sum(PWI(mask==1 & VascAtlsrshp==i));
-        BFF(i,2)=sum(PWIPVC(mask==1 & VascAtlsrshp==i));
+    VesselNames={'MCA_L';'MCA_R';'ACA_L';'ACA_R';'PCA_L';'PCA_R';'Ventricle_L';'Ventricle_R';'VB_L';'VB_R'};
+    %AtlasOrder = [3 4 1 2 5 6 9 10 7 8]; %MCAL MCAR ACAL ACAR PCAL PCAR VL VR VBL VBR
+    AtlasOrder = [3 4 1 2 5 6 9 10 7 8]; %MCAL MCAR ACAL ACAR PCAL PCAR VL VR VBL VBR
+    for i=1:10
+        territory=AtlasOrder(i);
+        BFF(i,1)=sum(PWI(mask==1 & VascAtlsrshp==territory)); %Column 1 without PVC
+        BFF(i,2)=sum(PWIPVC(mask==1 & VascAtlsrshp==territory)); %Column 2 with PVC
+        BFF(i,5)=mean(PWI(mask==1 & VascAtlsrshp==territory)); %Column 1 without PVC
+        BFF(i,6)=mean(PWIPVC(mask==1 & VascAtlsrshp==territory)); %Column 2 with PVC
     end
     BFF(:,3)=BFF(:,1)./sum(BFF(:,1));
     BFF(:,4)=BFF(:,2)./sum(BFF(:,2));
 
+	Table = table('Size',[10,4],'VariableTypes',{'cellstr','double','double','double'},'VariableNames',["Flow","Sum of voxel values","Fraction","Mean"]);
+    Table.('Flow') = VesselNames;
+    Table.('Sum of voxel values') = BFF(:,2);
+    Table.('Fraction') = BFF(:,4);
+    Table.('Mean') = BFF(:,6);
     %% Save json of fractions
     path2save=strcat(path2bids,'\derivatives\ExploreASL\',subject,'_1\ASL_1');
-    bff=struct;
-    bff.r_aca.sum = BFF(1,2);
-    bff.r_aca.frac = BFF(1,4);
-    bff.l_aca.sum = BFF(2,2);
-    bff.l_aca.frac = BFF(2,4);
-    
-    bff.r_mca.sum = BFF(3,2);
-    bff.r_mca.frac = BFF(3,4);
-    bff.l_mca.sum = BFF(4,2);
-    bff.l_mca.frac = BFF(4,4);
-    
-    bff.r_pca.sum = BFF(5,2);
-    bff.r_pca.frac = BFF(5,4);
-    bff.l_pca.sum = BFF(6,2);
-    bff.l_pca.frac = BFF(6,4);
-    
-    bff.r_va.sum = BFF(7,2);
-    bff.r_va.frac = BFF(7,4);
-    bff.l_va.sum = BFF(8,2);
-    bff.l_va.frac = BFF(8,4);
-    cd(path2save)
-    encoded=jsonencode(bff,"PrettyPrint",true);
-    fid = fopen('bff.json','w');
-    fprintf(fid,'%s',encoded);
-    fclose(fid);
+    writetable(Table,fullfile(path2save,'ASL_ModelConfig.csv'));
