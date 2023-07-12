@@ -9,6 +9,8 @@ function [BFF] = computeBFF(path2bids,subject,path2atlas)
     VascAtlsrshp = round(imresize3(VascAtlas,size(PWI),'Method','nearest')); %Resize atlas to xASL resolution
     PWI(isnan(PWI))=0;
     PWIPVC(isnan(PWIPVC))=0;
+    PWI(PWI<0)=0;
+    PWIPVC(PWIPVC<0)=0;
     VesselNames={'MCA_L';'MCA_R';'ACA_L';'ACA_R';'PCA_L';'PCA_R';'Ventricle_L';'Ventricle_R';'VB_L';'VB_R'};
     %AtlasOrder = [3 4 1 2 5 6 9 10 7 8]; %MCAL MCAR ACAL ACAR PCAL PCAR VL VR VBL VBR
     AtlasOrder = [3 4 1 2 5 6 9 10 7 8]; %MCAL MCAR ACAL ACAR PCAL PCAR VL VR VBL VBR
@@ -21,7 +23,6 @@ function [BFF] = computeBFF(path2bids,subject,path2atlas)
     end
     BFF(:,3)=BFF(:,1)./sum(BFF(:,1));
     BFF(:,4)=BFF(:,2)./sum(BFF(:,2));
-
 	Table = table('Size',[10,4],'VariableTypes',{'cellstr','double','double','double'},'VariableNames',["Flow","Sum of voxel values","Fraction","Mean"]);
     Table.('Flow') = VesselNames;
     Table.('Sum of voxel values') = BFF(:,2);

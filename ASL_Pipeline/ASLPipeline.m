@@ -1,8 +1,8 @@
 clear;clc;
 PWD=pwd;addpath(PWD)
-path2bids='C:\Users\sdem348\Desktop\TestASLPipe';
-path2xasl='C:\Users\sdem348\Desktop\ExploreASL-1.10.1';
-subject="sub-002";
+path2bids='';
+path2xasl='C:\Users\sdem348\Documents\MATLAB\ExploreASL-1.10.1';
+subject="sub-001";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%% Do not need to change anything below %%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,6 +15,7 @@ cd(path2xasl)
 %delete(strcat(path2bids,'\derivatives\ExploreASL\dataPar.json'))
 x=ExploreASL(path2bids,0,[1 1 1]);
 delete(strcat(path2bids,'\derivatives\ExploreASL\dataPar.json'))
+delete(strcat(path2bids,'\dataPar.json'))
 cd(PWD)
 %% Set up all paths
 P=makepaths(path2bids,subject);
